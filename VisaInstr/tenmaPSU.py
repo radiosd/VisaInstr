@@ -30,10 +30,10 @@ class TenmaPSU(object):
         self.lastCmd = ''
         self.lastRead = []
         self.flushed = []
-        
+
     def __repr__(self):
         return 'PSU {:s},{:d}'.format(self.name, self.address)
-    
+
     def _write(self, message):
         """write the message to the device"""
         # clear up any left over output
@@ -42,8 +42,9 @@ class TenmaPSU(object):
         self.lastCmd = message
         logging.debug('>> '+message)
         self.serial.write(message.upper(), termination=0)
-        
-    def _read(self):se        """read the message from the device,'' if nothing to read"""
+
+    def _read(self):
+        """read the message from the device,'' if nothing to read"""
         self.lastRead = self.__read_all()
         if len(self.lastRead)==0:
             return ''    # avoid time out error if there is nothing to read
@@ -53,7 +54,7 @@ class TenmaPSU(object):
         ans = self.lastRead[0][0]
         logging.debug('<< '+str(ans))
         return ans
-        
+
     def __read_all(self):
         # from stack overflow, clear the device keeping read buffer
         handle = self.serial
@@ -64,11 +65,11 @@ class TenmaPSU(object):
                 data.append(handle.visalib.read(handle.session, 
                             handle.bytes_in_buffer)) 
         return data
-    
+
     def _returnValue(self, value, as_float):
         """optionally convert the string as a float"""
         return float(value) if as_float else value
-    
+
     def connect(self,vi_resource_manager):
         """connect the device using the visa resource manager"""
         serial = vi_resource_manager.\
@@ -77,12 +78,12 @@ class TenmaPSU(object):
         serial.query_delay = 0.05    # 50 mS needed for reliable query
         self.serial = serial
         self.__read_all()   # was self.serial.clear() but unavailable in linux?
-        
+
     def disconnect(self):
         """disconnect and close the serial resource"""
         self.serial.close()
         self.serial = None
-        
+
     def query(self, message, delay=None):
         """send a command and receive the reply"""
         # the default delay is obtained from the serial port
@@ -91,7 +92,7 @@ class TenmaPSU(object):
         if delay > 0.0:
             sleep(delay)
         return self._read()
-    
+
     def idn(self):
         """the GP-IB standard idenfification test"""
         return self.query('*IDN?')
@@ -101,24 +102,24 @@ class TenmaPSU(object):
         logging.info('psu on')
         self._write('OUT1')
         sleep(self.settling_time)
-        
+
     def off(self):
         """turn psu off, uses a mechanical switch so need a pause"""
         logging.info('psu off')
         self._write('OUT0')
         sleep(self.settling_time)
-        
+
     def setVoltage(self, v):
         """set the voltage output limit in volts"""
         cmd_str = 'VSET1:{:2.2f}'.format(v)
         self._write(cmd_str)
         sleep(self.settling_time)
-    
+
     def getVoltage(self, by_value=False):
         """return the set voltage limit in volts"""
         # default is a string, use True to return an int
         return self._returnValue(self.query('VSET1?'), by_value)
-    
+
     def readVoltage(self, by_value=False):
         """return the actual voltage output in volts"""
         # default is a string, use True to return an int
@@ -132,7 +133,7 @@ class TenmaPSU(object):
         cmd_str = 'ISET1:{:2.3f}'.format(i)
         self._write(cmd_str)
         sleep(self.settling_time)
-        
+
     def getCurrent(self, by_value=False):
         """return the set current limit in amps"""
         # default is a string, use True to return an int
