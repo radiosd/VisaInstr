@@ -1,18 +1,14 @@
 VisaInstr
 =========
 
-A package for access and control of instrument using pyvisa.  The PlutoSdr file defines a class for control of 
-the hardware.  There is a 2 tone DDS generator built into the Tx firmware and there is a separate file and
-class used to define the control of that.  An instance of PlutoSdr automatically creates the DDS 
-
+A package for access and control of instrument using pyvisa.  
 Getting Started
 ---------------
-Dependancies: pyvisa, changeExt
-pyvisa
- - installation is platform dependent
-changeExt
- - clone from https://github.com/radiosd/rsdLib.git
- - use setup.py to install
+Dependancies: 
+ - pyvisa - installation is platform dependent
+ - changeExt
+   - clone from https://github.com/radiosd/rsdLib.git
+   - use setup.py to install
 
 Installation of VisaInstr is via the standard python setup.py install.
 
